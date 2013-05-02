@@ -1,0 +1,8 @@
+== Gibson
+=== A simple Python IRC bot using sockets
+
+----
+
+==== More to come.
+
+copyright 2013 Thomas Noe
