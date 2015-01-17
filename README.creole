@@ -2,7 +2,10 @@
 === A simple Python IRC bot using sockets
 
 ----
-
+Why sockets?
+* more control
+* learning experience
+* irc channel competition
 ==== More to come.
 
 copyright 2013 Thomas Noe
