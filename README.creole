@@ -6,6 +6,13 @@ Why sockets?
 * more control
 * learning experience
 * irc channel competition
+
+==== Features
+* Auth levels (owner and admin)
+* Read/Write to JSON file
+ * administrators
+ * triggered responses
+
 ==== More to come.
 
 copyright 2013 Thomas Noe
