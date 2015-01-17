@@ -10,8 +10,8 @@ Why sockets?
 ==== Features
 * Auth levels (owner and admin)
 * Read/Write to JSON file
- * administrators
- * triggered responses
+## administrators
+## triggered responses
 
 ==== More to come.
 
