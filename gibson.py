@@ -19,9 +19,9 @@ class Bot:
         self.owner = owner
         if not self.owner in self.admins:
             self.admins.append(owner)
-        self.autoreplies = ['^wr', 'Hello there.', 'My ears are ringing..',
+        self.autoreplies = ['Hello there.', 'My ears are ringing..',
                             'WHAT DID YOU SAY?', 'Come at me bro',
-                            'Don\'t tase me bro', '...', '^mum %s' % self.owner]
+                            'Don\'t tase me bro', '...']
     def connect(self):
         self.socket.connect((self.host, self.port))
         time.sleep(0.2)
@@ -53,13 +53,16 @@ class Bot:
             print "command %s" % message
             dat = message.split()
             self.handleCommand(channel, nick, dat[0], dat[1:])
+
         elif message[0] == '.':
             print 'owner cmd %s' % message
             dat = message.split()
             self.ownerCmd(channel, nick, dat[0], dat[1:])
+
         elif self.nick in message and 'ping' in message.lower():
             print '###PING###'
             self.reply2(channel, 'PONG %s' % nick)
+
         elif self.nick in message:
             print '%s (PING): %s' % (nick, message)
             self.reply2(channel, choice(self.autoreplies))
@@ -72,6 +75,7 @@ class Bot:
             del self.responses[command]
         except:
             print 'error'
+
     def auth_lvl(self, name):
         if name == self.owner:
             return 'owner'
@@ -80,10 +84,12 @@ class Bot:
                 return 'admin'
             else:
                 return None
+
     def ownerCmd(self, channel, nick, command, arguments):
         command = command[1:].lower()
         if command == 'op' and self.auth_lvl(nick[1:]) == 'owner':
             self.socket.send('MODE %s +o %s\r\n' % (channel, arguments[0]))
+
         elif command == 'dop' and self.auth_lvl(nick[1:]) == 'owner':
             self.socket.send('MODE %s -o %s\r\n' % (channel, arguments[0]))
 
@@ -94,33 +100,42 @@ class Bot:
                 self.disconnect(channel)
                 self.db_save()
                 exit()
+
         elif command == 'admin' and self.auth_lvl(nick[1:]) == 'owner':
             self.admins.append(arguments[0])
+
         elif command == 'dadmin' and self.auth_lvl(nick[1:]) == 'owner':
             try:
                 loc = self.admins.index(arguments[0])
                 del self.admins[loc]
             except IndexError:
                 pass
+
         elif command == 'isup':
             if is_up.get_code(arguments[0]):
                 self.reply(channel,nick, '%s is up! [%i]' % (arguments[0], x))
             else:
                 self.reply(channel, nick, '%s appears to be down.' % (arguments[0]))
+
         elif command == 'join':
             if self.auth_lvl(nick[1:]) =='owner':
                 self.join(arguments[0])
+
         elif command == 'leave':
             if self.auth_lvl(nick[1:]) =='owner':
                 self.leave(channel)
+
         elif command == 'identify':
                 self.identify(arguments[0], nick)
+
         elif command == 'define':
             if self.auth_lvl(nick[1:]) =='admin' or self.auth_lvl(nick[1:]) == 'owner':
                 self.addResponse(arguments[0], arguments[1:])
+
         elif command == 'forget':
             if self.auth_lvl(nick[1:]) == 'owner' or self.auth_lvl(nick[1:]) == 'admin':
                 self.remResponse(arguments[0])
+
         elif command == 'list':
             if self.auth_lvl(nick[1:]) == 'owner' or self.auth_lvl(nick[1:]) == 'admin':
                 li = []
@@ -130,6 +145,7 @@ class Bot:
                 li_s = ' '.join(li)
                 self.reply(channel, nick, li_s)
             else: pass
+
         elif command == 'alist':
             if self.auth_lvl(nick[1:]) == 'owner':
                 li = []
@@ -137,6 +153,7 @@ class Bot:
                     li.append(i)
                 li = ' '.join(li)
                 self.reply(channel, nick, li)
+
         elif command == 'tell':
             if self.auth_lvl(nick[1:]) == 'admin' or self.auth_lvl(nick[1:]) == 'owner':
                 self.reply2(channel, "%s: %s" % (arguments[0], ' '.join(arguments[1:])))
@@ -157,6 +174,7 @@ class Bot:
     def identify(self, pw, n):
         if self.auth_lvl(n[1:]) == 'owner':
             self.reply('NickServ', '', 'IDENTIFY %s' % pw)
+
     def flush(self):
         print self.socket.recv(4096)
 
@@ -175,11 +193,13 @@ class Bot:
                 # handle possibilities
                 if line[0] == 'PING':
                     self.pong(line[1])
+
                 elif line[1] == "PRIVMSG":
                     channel = line[2]
                     nick = line[0].split('!')[0]
                     message = ' '.join(line[3:])[1:]
                     self.handleMessage(channel, nick, message)
+
                 elif line[1] == "NOTICE":
                     nick = line[0].split('!')[0]
                     message = ' '.join(line[3:])[1:]
@@ -202,12 +222,12 @@ class Bot:
 
 
 if __name__ == "__main__":
-    bot = Bot('irc.windfyre.net', 6667, 'gibs0n', 'gibson', 'iAmerikan')
+    bot = Bot('irc.freenode.net', 6667, 'gibs0n', 'gibson', 'OWNER')
     try:
         bot.connect()
         bot.flush()
         time.sleep(2)
-        bot.join('##blackhats')
+        bot.join('#python')
         bot.mainloop()
 
     except:
