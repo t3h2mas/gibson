@@ -9,8 +9,6 @@ import requests
 
 def get_code(page):
     r = requests.get(page)
-    # I'm pretty sure that this is the same as
-    # r.status_code == 200
-    if r.ok: 
+    if r.ok:
         return True
     return False

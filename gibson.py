@@ -1,6 +1,5 @@
 #!/usr/bin/python2.6
 import sys, socket, string, time, json, os
-from httplib import HTTPConnection as HC
 from random import choice
 from plugins import urban, is_up
 
@@ -28,7 +27,7 @@ class Bot:
         time.sleep(0.2)
         self.socket.send("NICK %s\r\n" % self.nick)
         time.sleep(0.2)
-        self.socket.send("USER %s %s bla :%s\r\n" % ( 
+        self.socket.send("USER %s %s bla :%s\r\n" % (
         self.ident, self.host, "the bot called %s" % self.nick ))
 
     def disconnect(self, channel=None):
@@ -67,7 +66,7 @@ class Bot:
 
     def addResponse(self, command, response):
         self.responses[command] = ' '.join(response)
-    
+
     def remResponse(self, command):
         try:
             del self.responses[command]
@@ -128,7 +127,7 @@ class Bot:
                 for key in self.responses.keys():
                     li.append(key)
                 li.sort()
-                li_s = ' '.join(li) 
+                li_s = ' '.join(li)
                 self.reply(channel, nick, li_s)
             else: pass
         elif command == 'alist':
@@ -141,7 +140,7 @@ class Bot:
         elif command == 'tell':
             if self.auth_lvl(nick[1:]) == 'admin' or self.auth_lvl(nick[1:]) == 'owner':
                 self.reply2(channel, "%s: %s" % (arguments[0], ' '.join(arguments[1:])))
-        
+
         elif command == 'ud':
             data = urban.urban_lookup(arguments)
             self.reply(channel, '', data)
@@ -151,10 +150,10 @@ class Bot:
 
     def reply(self, channel, nick, message):
         self.socket.send("PRIVMSG %s %s: %s\r\n" % (channel, nick, message))
-    
+
     def reply2(self, channel, message):
         self.socket.send("PRIVMSG %s :%s\r\n" % (channel, message))
-    
+
     def identify(self, pw, n):
         if self.auth_lvl(n[1:]) == 'owner':
             self.reply('NickServ', '', 'IDENTIFY %s' % pw)
@@ -193,14 +192,14 @@ class Bot:
             resps.close()
             return data
         except IOError:
-            return {'hi': 'Hi there!', 'admins': []} 
+            return {'hi': 'Hi there!', 'admins': []}
 
     def db_save(self, fname='cmds.json'):
         with open(fname, 'w') as f:
             data = self.responses
             data['admins'] = self.admins
             json.dump(data, f)
-         
+
 
 if __name__ == "__main__":
     bot = Bot('irc.windfyre.net', 6667, 'gibs0n', 'gibson', 'iAmerikan')
@@ -210,7 +209,7 @@ if __name__ == "__main__":
         time.sleep(2)
         bot.join('##blackhats')
         bot.mainloop()
-        
+
     except:
         print "interrupt"
         print sys.exc_info()[0]
